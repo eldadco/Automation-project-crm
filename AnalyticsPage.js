@@ -1,11 +1,6 @@
-const BasePage = require("./BasePage")
-const ClientsPage = require('./ClientsPage')
-const ActionsPage = require('./ActionsPage')
-const HomePage = require('./HomePage')
 class AnalyticsPage {
     constructor(selenium) {
         this.selenium = selenium
-        this.HomePage = new HomePage(this.selenium)
     }
 
     //This method navigate to Analytics page
@@ -18,13 +13,13 @@ class AnalyticsPage {
     //Returns the requested figure
     async AnalyticsDataPull(text) {
 
-        let arr = await this.selenium.findElementListBy('className', 'badge')
-        let temp
-        for (let a of arr) {
-            temp = await this.selenium.getTextFromElement('className', 'badge-text', null, a)
-            if (temp == text) {
-                let num = await this.selenium.getTextFromElement('className', 'badge-val', null, a)
-                return num
+        let detailsBar = await this.selenium.findElementListBy('className', 'badge')
+        let tempText
+        for (let detail of detailsBar) {
+            tempText = await this.selenium.getTextFromElement('className', 'badge-text', null, detail)
+            if (tempText == text) {
+                let value= await this.selenium.getTextFromElement('className', 'badge-val', null, detail)
+                return value
             }
         }
         throw "The text parameter is not ok , the text can be : Outstanding Clients/Emails Sent"

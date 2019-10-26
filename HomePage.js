@@ -9,10 +9,7 @@ class HomePage {
     async Navigate(PageName) {
         await this.selenium.clickElement('css', `input[value="${PageName}"]`)
         console.log(`Navigate to ${PageName}`)
-        await this.selenium.Sleep(5000)
-    }
-    async ValidateNavigate(PageName) {
-        await this.selenium.URLvalidation(PageName)
+        await this.selenium.Sleep(3000)
     }
 
 

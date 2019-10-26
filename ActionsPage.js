@@ -1,5 +1,3 @@
-const ClientsPage = require('./ClientsPage')
-const analyticsPage = require('./AnalyticsPage')
 class ActionsPage {
     constructor(selenium) {
         this.selenium = selenium

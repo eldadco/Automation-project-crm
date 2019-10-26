@@ -14,7 +14,7 @@ class seleniumInfra {
     async getURL(Url) {
         await this.driver.get(Url)
         await this.driver.manage().window().maximize()
-        this.driver.sleep(3000)
+        await this.driver.sleep(3000)
     }
     async URLvalidation(pageName) {
         try {
@@ -172,6 +172,9 @@ class seleniumInfra {
     {
        await this.driver.sleep(n)
     }
+
+
+
     async close() {
         await this.driver.quit()
         console.log("The page quit")

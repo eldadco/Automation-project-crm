@@ -89,7 +89,7 @@ class ClientsPage {
                         changeto = changeto.split(" ").join("")
                         flag = await this.Ismatch(arr, changeto, 'name')
                     }
-                    console.log(flag ? "Name has update successfully" : "Name has not update successfully")
+                    console.log(flag ? "Name was update successfully" : "Name was not update successfully")
                     return
                 case "country":
                     await this.selenium.clearElementField('css', 'input#country')
@@ -106,7 +106,7 @@ class ClientsPage {
                     flag = await this.Ismatch(arr, changeto, field)
                     break
             }
-            console.log(flag ? "Client details was update succsesfully" : "Client details was not update succsesfully")
+            console.log(flag ? "Client details were update succsesfully" : "Client details were not update succsesfully")
             return flag
         }
         catch (error) {
@@ -145,7 +145,7 @@ class ClientsPage {
         }
     }
 
-
+    //This method will clear the element field
     async clear(locatortype, locatorvalue) {
         await this.selenium.Sleep(2000)
         await this.selenium.clearElementField(locatortype, locatorvalue)
