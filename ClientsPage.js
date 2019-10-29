@@ -1,6 +1,8 @@
+// const BasePage = require('./BasePage')
 class ClientsPage {
-    constructor(selenium) {
+    constructor(selenium,logger) {
         this.selenium = selenium
+        this.logger = logger
     }
 
     async navigateToClientsPage() {
@@ -21,9 +23,10 @@ class ClientsPage {
         let flag = await this.selenium.isElementExists('css', 'tr.clientDetails')
         if (flag) {
             console.log("There is at least one result")
+       
             return true
         }
-        console.log("There is not results")
+        console.log("There are no results")
         return false
     }
 
@@ -59,8 +62,8 @@ class ClientsPage {
                 await this.selenium.clickElement('css', 'div.page-numbers img:nth-child(5)')
                 i++
             }
-            console.log(ismatch ? "Test passed -> All the results are good and match to the input " : "Test failed -> Not all results are good and match to the input ")
-
+            console.log(ismatch ? `Test passed -> All the results are good and match to the input:${input} by ${searchBy}` : `Test failed -> Not all results are good and match to the input: ${input} by ${searchBy} `)
+            this.logger.info(ismatch ? `Test passed -> All the results are good and match to the input:${input} by ${searchBy}` : `Test failed -> Not all results are good and match to the input: ${input} by ${searchBy} `)
             return counter
         }
         catch (error) {
@@ -70,7 +73,7 @@ class ClientsPage {
     //This method will update details of specsific client and validate that the datails change as expected 
     // The suggest is that there is just one client with this name the using on arr is for one record and because the method ismatch accept array 
 
-    async UpdateDetails(field, changeto) {
+    async updateDetails(field, changeto) {
         try {
             let arr
             await this.selenium.clickElement('css', 'tr.clientDetails')
@@ -90,7 +93,7 @@ class ClientsPage {
                         flag = await this.Ismatch(arr, changeto, 'name')
                     }
                     console.log(flag ? "Name was update successfully" : "Name was not update successfully")
-                    return
+                    return flag
                 case "country":
                     await this.selenium.clearElementField('css', 'input#country')
                     await this.selenium.write(changeto, 'css', 'input#country')
@@ -122,7 +125,8 @@ class ClientsPage {
                 index = this._sortColumns(searchBy)
             }
 
-            for (let a of arr) {
+            for (let a of arr) 
+            {
                 if (searchBy == 'name') {
                     let fname = await this.selenium.getTextFromElement('css', 'tr.clientDetails th:nth-child(1)', null, a)
                     let lname = await this.selenium.getTextFromElement('css', 'tr.clientDetails th:nth-child(2)', null, a)
@@ -131,6 +135,7 @@ class ClientsPage {
                     }
                 }
                 else {
+                    await this.selenium.Sleep(2000)
                     let field = await this.selenium.getTextFromElement('css', `tr.clientDetails th:nth-child(${index})`, null, a)
                     field = field.split(" ").join("")
                     if (field.toLowerCase() !== input.toLowerCase()) {
@@ -149,6 +154,8 @@ class ClientsPage {
     async clear(locatortype, locatorvalue) {
         await this.selenium.Sleep(2000)
         await this.selenium.clearElementField(locatortype, locatorvalue)
+        await this.selenium.Sleep(2000)
+
     }
 }
 

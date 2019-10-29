@@ -12,7 +12,6 @@ class AnalyticsPage {
 
     //Returns the requested figure
     async AnalyticsDataPull(text) {
-
         let detailsBar = await this.selenium.findElementListBy('className', 'badge')
         let tempText
         for (let detail of detailsBar) {

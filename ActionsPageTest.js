@@ -6,7 +6,9 @@ const HOMEPAGE = require('./HomePage')
 
 class ActionsPageTest {
     constructor() {
-        this.testSelenium = new BasePage().selenium
+        this.basepage= new BasePage()
+        this.testSelenium = this.basepage.selenium
+        this.logger = this.basepage.logger
         this.ActionsPage = new actionsPage(this.testSelenium)
         this.clientsPage = new ClientsPage(this.testSelenium)
         this.AnalyticsPage = new AnalyticsPage(this.testSelenium)
@@ -29,6 +31,7 @@ class ActionsPageTest {
         await this.homepage.Navigate('Clients')
         let isadded = await this.clientsPage.Search(`${Fname} ${Lname}`, 'name')
         console.log(isadded && isgoodpopup ? "Test passed -> Client has been added as expected" : "Test failed -> Client has not been added")
+        this.logger.info(isadded && isgoodpopup ? "Test passed -> Client has been added as expected" : "Test failed -> Client has not been added")
     }
 
     //This method will update Email type that was empty and check if the number of emails sent on the analytics page has increased by one 
@@ -43,9 +46,12 @@ class ActionsPageTest {
             emailsSentsNumber = parseInt(emailsSentsNumber) + 1
             console.log(`The number before the update: ${emailsSentsNumber - 1} The number after the update : ${newEmailsSentsNumber}`)
             console.log(emailsSentsNumber == newEmailsSentsNumber ? "Test passed =>The number of emails sent on the analytics page has increased as expected" : "Test failed =>The number of emails sent on the analytics page hasn't increased as expected")
+            this.logger.info(emailsSentsNumber == newEmailsSentsNumber ? "Test passed =>The number of emails sent on the analytics page has increased as expected" : "Test failed =>The number of emails sent on the analytics page hasn't increased as expected")
+        
         }
         catch (error) {
             console.log(error)
+            this.logger.error(error)
         }
     }
 
@@ -60,10 +66,12 @@ class ActionsPageTest {
             let newOutStandingNumber = await this.AnalyticsPage.AnalyticsDataPull("Outstanding Clients")
             outstandingNumber = outstandingNumber - 1
             console.log(outstandingNumber == newOutStandingNumber ? "Test passed =>The number of Outstanding clients on the analytics page has decreased as expected " : "Test failed =>The number of outsanding clients on the analytics page hasn't decreased as expected ")
+            this.logger.info(outstandingNumber == newOutStandingNumber ? "Test passed =>The number of Outstanding clients on the analytics page has decreased as expected " : "Test failed =>The number of outsanding clients on the analytics page hasn't decreased as expected ")
         }
 
         catch (error) {
             console.log(error)
+            this.logger.error(error)
         }
     }
 
@@ -72,7 +80,8 @@ class ActionsPageTest {
         await this.homepage.Navigate('Actions')
         await this.ActionsPage.Update("", 'Sold')
         let isExists = await this.ActionsPage.CheckPopUp()
-        console.log(isExists ? "Test failed" : "Test passed")
+        console.log(isExists ? "Test - negativesoldUpdate failed" : "Test - negativeSoldUpdate passed")
+        this.logger.info(isExists ? "Test - negativesoldUpdate failed" : "Test - negativeSoldUpdate passed")
     }
 
 }

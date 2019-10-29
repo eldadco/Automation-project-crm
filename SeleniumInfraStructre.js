@@ -8,8 +8,9 @@ let service = new chrome.ServiceBuilder(path).build();
 chrome.setDefaultService(service);
 
 class seleniumInfra {
-    constructor() {
+    constructor(logger) {
         this.driver = new Builder().forBrowser('chrome').build(); 
+        this.logger = logger
     }
     async getURL(Url) {
         await this.driver.get(Url)
@@ -21,19 +22,16 @@ class seleniumInfra {
             console.log(await this.driver.wait(until.urlContains(pageName.toLowerCase()), 8000))
            
             console.log("Test pass Url is valid")
+            this.logger.debug("Test pass Url is valid")
             return true
         } catch (error) {
             console.log(error);
                 console.log("Test failed Url is not valid")
+                this.logger.error("Test failed Url is not valid")
                 return false 
         }
     }
 
-    // write(text,LocatorType,LocatorValue) 
-    // {
-
-
-    // }
     async isElementExists(locatorType, locatorValue) {
         try {
             let element = await this.findEelem(locatorType, locatorValue)
@@ -61,6 +59,7 @@ class seleniumInfra {
         }
         catch (error) {
             console.log(`element can not found with locatorType: ${LocatorType} and ${LocatorValue}`)
+            this.logger.error(`element can not found with locatorType: ${LocatorType} and ${LocatorValue}`)        
         }
     }
 
@@ -71,6 +70,7 @@ class seleniumInfra {
         }
         catch (error) {
             console.error(`${error} can not find elements of locatorType: ${locatorType} and locatorValue: ${locatorValue}`)
+            this.logger.error(`${error} can not find elements of locatorType: ${locatorType} and locatorValue: ${locatorValue}`)
         }
     }
 
@@ -89,7 +89,7 @@ class seleniumInfra {
                this.driver.sleep(2000)
                 await element.click()
                 console.log('Clicked on element with ' + locatorType + " == " + locatorValue)
-
+                this.logger.debug('Clicked on element with ' + locatorType + " == " + locatorValue)
             }
             await this.driver.sleep(2000)
 
@@ -97,6 +97,7 @@ class seleniumInfra {
         catch (error) 
         {
             console.error('Got error while trying to click on element with ' + locatorType + " : " + locatorValue)
+            this.logger.error('Got error while trying to click on element with ' + locatorType + " : " + locatorValue)
         }
 
     }
@@ -118,7 +119,7 @@ class seleniumInfra {
 
         catch (error) {
             console.error("can not get text from element " + error)
-
+             this.logger.error("can not get text from element " + error)   
 
         }
 
@@ -140,10 +141,12 @@ class seleniumInfra {
             }
 
             console.log(`${data} has written into the input`)
+            this.logger.debug(`${data} has written into the input`)
         }
         catch (error) {
-            console.error("can not send keys")
-            console.error(error)
+            console.error("can not send keys" +error)
+            this.logger.error("can not send keys" +error)
+
 
 
         }
@@ -178,7 +181,7 @@ class seleniumInfra {
     async close() {
         await this.driver.quit()
         console.log("The page quit")
-
+        this.logger.info("The page quit")
     }
 
 

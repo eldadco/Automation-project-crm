@@ -6,7 +6,9 @@ const AnalyticsPage = require("./AnalyticsPage")
 
 class AnalyticsPageTest {
     constructor() {
-        this.testSelenium = new BasePage().selenium
+        this.basepage = new BasePage()
+        this.testSelenium = this.basepage.selenium
+        this.logger = this.basepage.logger
         this.ActionsPage = new actionsPage(this.testSelenium)
         this.clientsPage = new ClientsPage(this.testSelenium)
         this.AnalyticsPage = new AnalyticsPage(this.testSelenium)
@@ -16,7 +18,7 @@ class AnalyticsPageTest {
 
     async test() {
 
-        await thisg.homepage.NavigateToHomePage()
+        await this.homepage.NavigateToHomePage()
         await this.checkOutstandingClients()
         await this.checkEmailSent()
         await this.updateAndCheckIfIncrease('Baroh', 'Cohen', 'Israel', 'Eldad', 'MaradonaCohen@gamil.com')
@@ -32,7 +34,7 @@ class AnalyticsPageTest {
         await this.clientsPage.Search('No', 'Sold')
         let count = await this.clientsPage.ValidateSearchResults('No', 'Sold') //count the outstanding clients
         console.log(outstandingNumber == count ? `Test-Pass - The number of outstandig Clients on analytics page is correct :${outstandingNumber}` : `Test Failed - The number of outstandig Clients on analytics page is not correct ,value: ${outstandingNumber} , count: ${count}`)
-
+        this.logger.info(outstandingNumber == count ? `Test checkOutstandingClient-Passed - The number of outstandig Clients on analytics page is correct :${outstandingNumber}` : `Test Failed - The number of outstandig Clients on analytics page is not correct ,value: ${outstandingNumber} , count: ${count}`)
     }
 
     //This method count the number of clients with email sent and compare between the counter to the number on analytics page 
@@ -47,6 +49,7 @@ class AnalyticsPageTest {
             count += await this.clientsPage.ValidateSearchResults(type, 'Email Type') //count all the customers that recieved mail
         }
         console.log(emailSentNumber == count ? "Test-Passed - The number of Emails sent on analytics page is correct" : `Test Failed - The number of Emails sent on analytics page is not correct , number of email sents on analytics = ${emailSentNumber} and the counter on the clientsPage is =${count}`)
+        this.logger.info(emailSentNumber == count ? "Test-checkEmailSent-Passed - The number of Emails sent on analytics page is correct" : `Test Failed - The number of Emails sent on analytics page is not correct , number of email sents on analytics = ${emailSentNumber} and the counter on the clientsPage is =${count}`)
     }
 
     //This method accept details,add client and return true if the outstanding clients increased by one false otherwise 
@@ -61,15 +64,18 @@ class AnalyticsPageTest {
             let newOutstandingNumber = await this.AnalyticsPage.AnalyticsDataPull('Outstanding Clients')
             if (outstandingNumber == newOutstandingNumber) {
                 console.log("Test Passed => the outstanding clients number are increased by one")
+                this.logger.info("Test Passed => the outstanding clients number are increased by one")
                 return true
             }
             else {
                 console.log("Test failed => the outstanding clients number are not increased")
+                this.logger.error("Test failed => the outstanding clients number are not increased")
                 return false
             }
         }
         catch (error) {
             console.error(error)
+            this.logger.error(error)
         }
     }
 
@@ -82,8 +88,18 @@ class AnalyticsPageTest {
             i++
         }
         console.log(flag ? "The stability Test has passed" : "The stability Test has failed")
-    }
+        if (flag) 
+        {
 
-}
+            this.logger.info("The stability Test has passed")
+        }
+        else 
+        {
+            this.logger.error("The stability Test has failed")
+        }}
+    }    
+
+
+
 const AnalyticsTest = new AnalyticsPageTest()
 AnalyticsTest.test()
